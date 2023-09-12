@@ -1,0 +1,13 @@
+name = "BEASTPlugIns"
+uuid = "966263f4-37ec-4783-9d4f-a971602d30a4"
+authors = ["jc213439 "]
+version = "0.1.0"
+
+[deps]
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+EzXML = "8f5d6c58-4d21-5cfd-889c-e3ad7ee6a615"
+InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+LightXML = "9c8b4983-aa76-5018-a973-4c85ecc9e179"
+NewickTree = "b0a14db8-6308-4ebc-8917-f72cd81f5094"
+Parameters = "d96e819e-fc66-5662-9728-84c9c7592b0a"
+XML2_jll = "02c8fc9c-b97f-50b9-bbe4-9be30ff0a78a"
