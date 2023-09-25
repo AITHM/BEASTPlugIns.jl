@@ -165,6 +165,7 @@ function beast_xml(alignmentFile::NString,
                    gammaShapePrior::Union{Nothing, Distributions.Distribution}=nothing,
                    clockRateInit::Union{Nothing, AbstractFloat}=nothing,
                    clockRatePrior::Union{Nothing, Distributions.Distribution}=nothing,
+                   operator_weights::Dict{String, AbstractFloat}=Dict(reproductiveNumber=3., becomeUninfectiousRate=3., samplingProportion=3., origin=3., clockRate=3., gammaShape=6.)
                    clockModel::Symbol=:StrictClockModel,
                    substitutionModel::Symbol=:JukesCantor,
                    mutationRate::AbstractFloat=1.,
@@ -174,7 +175,7 @@ function beast_xml(alignmentFile::NString,
                    treeId::String="Tree",
                    chainLength::Integer=10_000_000,
                    logEvery::Integer=5_000,
-                   namespace="beastfx.app.seqgen:beast.base.evolution.alignment:beast.base.evolution.tree:beast.base.evolution.sitemodel:substmodels.nucleotide:beast.base.evolution.substitutionmodel:beast.base.evolution.branchratemodel:beast.base.inference.parameter",
+                   namespace="bdmm.evolution.speciation:beast.base.inference:beast.base.evolution.operator:beast.base.evolution.branchratemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.sitemodel:beast.base.evolution.likelihood:beast.base.inference.distribution:bdsky.evolution.speciation:beast.base.evolution.tree:beast.base.inference.parameter:beast.base.evolution.alignment:beast.base.inference:beast.base.evolution.tree.coalescent",
                    version="2.7")
 
     alignment = Alignment(root(parse_file(alignmentFile)))
@@ -266,7 +267,7 @@ function beast_xml(alignmentFile::NString,
                                      distribution=[prior, likelihood])
 
     treeOperators = [eval(:($T(tree="@"*$treeId))) for T in subtypes(TreeOperator)]
-    parameterOperators = [ScaleOperator(parameter = "@"*par, id=par*"Scaler") for par in parameters]
+    parameterOperators = [ScaleOperator(parameter = "@"*par, id=par*"Scaler", weight=operator_weights[parameter]) for par in parameters]
 
     operators = vcat(treeOperators, parameterOperators)
 
