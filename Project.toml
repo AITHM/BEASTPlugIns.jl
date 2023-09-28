@@ -4,7 +4,6 @@ authors = ["jc213439 "]
 version = "0.1.0"
 
 [deps]
-BirthDeathPhylo = "a36203fb-ed85-45c8-8629-a6b7e0b9c074"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 EzXML = "8f5d6c58-4d21-5cfd-889c-e3ad7ee6a615"
 InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
