@@ -176,7 +176,7 @@ end
 
 
 
-export beast_xml, BirthDeathMigrationModelUncoloured, BirthDeathSkylineModel, BEASTScript
+export beast_xml, beast_xml_from_template, get_tip_dates, get_tip_types, BirthDeathMigrationModelUncoloured, BirthDeathSkylineModel, BEASTScript
 
 # RealParameter, BEASTObject, Distribution, BEASTParameter, XML, Beta, Prior, BirthDeathSkylineModel, BooleanParameter, Sequence, Alignment,
 # Operator, TreeOperator, ScaleOperator, TreeParser, JukesCantor, SiteModel, StrictClockModel, BranchRateModel, SequenceSimulator, SequenceSimulatorXML, BEASTXML, Map,

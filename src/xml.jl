@@ -150,22 +150,22 @@ function beast_xml(alignmentFile::NString,
                    becomeUninfectiousRatePrior::Union{Nothing, Distributions.Distribution, Vector{<:Distributions.Distribution}}=nothing,
                    samplingProportionInit::Union{Nothing, AbstractFloat, Vector{<:AbstractFloat}}=nothing,
                    samplingProportionPrior::Union{Nothing, Distributions.Distribution, Vector{<:Distributions.Distribution}}=nothing,
-                   R0Init::Union{Nothing, Vector{<:AbstractFloat}}=nothing,
+                   R0Init::Union{Nothing, Float64, Vector{<:AbstractFloat}}=nothing,
                    R0Prior::Union{Nothing, Distributions.Distribution, Vector{<:Distributions.Distribution}}=nothing,
-                   R0AmongDemesInit::Union{Nothing, Vector{<:AbstractFloat}}=nothing,
+                   R0AmongDemesInit::Union{Nothing, Float64, Vector{<:AbstractFloat}}=nothing,
                    R0AmongDemesPrior::Union{Nothing, Distributions.Distribution, Vector{<:Distributions.Distribution}}=nothing,
-                   migrationMatrixInit::Union{Nothing, Vector{<:AbstractFloat}}=nothing,
+                   migrationMatrixInit::Union{Nothing, Float64, Vector{<:AbstractFloat}}=nothing,
                    migrationMatrixPrior::Union{Nothing, Distributions.Distribution, Vector{<:Distributions.Distribution}}=nothing,
-                   frequenciesInit::Union{Nothing, Vector{<:AbstractFloat}}=nothing,
+                   frequenciesInit::Union{Nothing, Float64, Vector{<:AbstractFloat}}=nothing,
                    frequenciesPrior::Union{Nothing, Distributions.Distribution, Vector{<:Distributions.Distribution}}=nothing,
-                   rhoInit::Union{Nothing, Vector{<:AbstractFloat}}=nothing,
+                   rhoInit::Union{Nothing, Float64, Vector{<:AbstractFloat}}=nothing,
                    rhoPrior::Union{Nothing, Distributions.Distribution, Vector{<:Distributions.Distribution}}=nothing,
                    stateNumber::Union{Nothing, Integer}=nothing,
                    gammaShapeInit::Union{Nothing, AbstractFloat}=nothing,
                    gammaShapePrior::Union{Nothing, Distributions.Distribution}=nothing,
                    clockRateInit::Union{Nothing, AbstractFloat}=nothing,
                    clockRatePrior::Union{Nothing, Distributions.Distribution}=nothing,
-                   operator_weights::Dict{String, AbstractFloat}=Dict(reproductiveNumber=3., becomeUninfectiousRate=3., samplingProportion=3., origin=3., clockRate=3., gammaShape=6.)
+                   operator_weights::Dict{String, Float64}=Dict("reproductiveNumber"=>3., "becomeUninfectiousRate"=>3., "samplingProportion"=>3., "origin"=>3., "clockRate"=>3., "gammaShape"=>6.),
                    clockModel::Symbol=:StrictClockModel,
                    substitutionModel::Symbol=:JukesCantor,
                    mutationRate::AbstractFloat=1.,
@@ -267,7 +267,7 @@ function beast_xml(alignmentFile::NString,
                                      distribution=[prior, likelihood])
 
     treeOperators = [eval(:($T(tree="@"*$treeId))) for T in subtypes(TreeOperator)]
-    parameterOperators = [ScaleOperator(parameter = "@"*par, id=par*"Scaler", weight=operator_weights[parameter]) for par in parameters]
+    parameterOperators = [ScaleOperator(parameter = "@"*par, id=par*"Scaler", weight=operator_weights[par]) for par in parameters]
 
     operators = vcat(treeOperators, parameterOperators)
 
@@ -305,6 +305,56 @@ function beast_xml(alignmentFile::NString,
     return  XMLDocument(beast_script)
 end
 
+
+# function beast_xml_from_template(alignment_file::String, nwk::Node, template::String)
+
+#     xml = parse_file(template)
+#     alignment = root(parse_file(alignment_file))
+#     tipTimes = get_tip_dates(nwk, joinall=true)
+
+#     trait_element = new_element("trait", Dict("value"=>tipTimes, "id"=>"dateTrait", "spec"=>"beast.base.evolution.tree.TraitSet", "traitname"=>"date"))
+#     add_child(trait_element, "taxa", Dict("id"=>"taxonSet", "spec"=>"TaxonSet", "name"=>"taxa", "alignment"=>"@SequenceSimulator"))
+
+#     tipTypes = get_tip_types(nwk, joinall=true)
+#     add_child(root(xml)["run"][1]["distribution"][1]["distribution"][1]["distribution"][1], "tiptypes", Dict("id"=>"typeTraitSet", "spec"=>"beast.base.evolution.tree.TraitSet", "taxa"=>"@taxonSet", "traitname"=>"type", "value"=>tipTypes))
+
+#     add_child(root(xml), alignment)
+#     add_child(root(xml)["run"][1]["state"][1]["stateNode"][1], trait_element)
+
+#     return xml
+# end
+
+
+function beast_xml_from_template(alignment_file::String, tip_times::String, tip_types::String, template::String)
+
+    xml = parse_file(template)
+    alignment = root(parse_file(alignment_file))
+
+    trait_element = new_element("trait", Dict("value"=>tip_times, "id"=>"dateTrait", "spec"=>"beast.base.evolution.tree.TraitSet", "traitname"=>"date"))
+    add_child(trait_element, "taxa", Dict("id"=>"taxonSet", "spec"=>"TaxonSet", "name"=>"taxa", "alignment"=>"@SequenceSimulator"))
+
+    add_child(root(xml)["run"][1]["distribution"][1]["distribution"][1]["distribution"][1], "tiptypes", Dict("id"=>"typeTraitSet", "spec"=>"beast.base.evolution.tree.TraitSet", "taxa"=>"@taxonSet", "traitname"=>"type", "value"=>tip_types))
+
+    add_child(root(xml), alignment)
+    add_child(root(xml)["run"][1]["state"][1]["stateNode"][1], trait_element)
+
+    return xml
+end
+
+
+function beast_xml_from_template(alignment_file::String, tip_times::String, template::String)
+
+    xml = parse_file(template)
+    alignment = root(parse_file(alignment_file))
+
+    trait_element = new_element("trait", Dict("value"=>tip_times, "id"=>"dateTrait", "spec"=>"beast.base.evolution.tree.TraitSet", "traitname"=>"date"))
+    add_child(trait_element, "taxa", Dict("id"=>"taxonSet", "spec"=>"TaxonSet", "name"=>"taxa", "alignment"=>"@SequenceSimulator"))
+
+    add_child(root(xml), alignment)
+    add_child(root(xml)["run"][1]["state"][1]["stateNode"][1], trait_element)
+
+    return xml
+end
 
 
 macro varname(arg)
