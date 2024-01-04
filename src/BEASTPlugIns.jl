@@ -153,7 +153,7 @@ end
 
 include("..\\src\\xml.jl")
 include("..\\src\\speciation.jl")
-include("..\\src\\utils.jl")
+# include("..\\src\\utils.jl")
 include("..\\src\\maps.jl")
 include("..\\src\\sitemodel.jl")
 include("..\\src\\likelihood.jl")
